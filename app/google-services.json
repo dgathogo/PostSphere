@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "175673855888",
+    "firebase_url": "https://post-sphere.firebaseio.com",
+    "project_id": "post-sphere",
+    "storage_bucket": "post-sphere.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175673855888:android:da6798b75bb97d7330ad15",
+        "android_client_info": {
+          "package_name": "us.ait.postsphere"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "175673855888-qlg2jq8v8t267ph70tc757hbf8i0ucsr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "us.ait.postsphere",
+            "certificate_hash": "1f45bdc8509929a093a8422d99bd10c08e4b78a9"
+          }
+        },
+        {
+          "client_id": "175673855888-73ui76c1siei3iov3dip4psv8bqjiuaj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-6perHC3mHorKhvzb8xRVhmV9w_xFcUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "175673855888-73ui76c1siei3iov3dip4psv8bqjiuaj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
