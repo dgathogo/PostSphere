@@ -36,7 +36,7 @@ class ForumActivity : AppCompatActivity() {
     }
 
 
-    fun queryPosts() {
+    private fun queryPosts() {
         val db = FirebaseFirestore.getInstance()
         val query = db.collection("posts")
 
@@ -56,7 +56,7 @@ class ForumActivity : AppCompatActivity() {
                         return
                     }
 
-                    for (dc in querySnapshot!!.getDocumentChanges()) {
+                    for (dc in querySnapshot!!.documentChanges) {
                         when (dc.type) {
                             DocumentChange.Type.ADDED -> {
                                 val post = dc.document.toObject(Post::class.java)
