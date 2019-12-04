@@ -18,7 +18,7 @@ class ForumActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forum)
         setSupportActionBar(toolbar)
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener {
             startActivity(Intent(this@ForumActivity, CreatePostActivity::class.java))
         }
 
@@ -40,7 +40,7 @@ class ForumActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         val query = db.collection("posts")
 
-        var allPostsListener = query.addSnapshotListener(
+        query.addSnapshotListener(
             object : EventListener<QuerySnapshot> {
                 override fun onEvent(
                     querySnapshot: QuerySnapshot?,

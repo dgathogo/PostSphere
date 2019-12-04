@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 //import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.post_row.view.*
@@ -45,11 +46,17 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val post = postsList[position]
+        holder.tvAuthor.text = post.postAuthor
         holder.tvTitle.text = post.postTitle
         holder.tvBody.text = post.postBody
         setAnimation(holder.itemView, position)
 
-
+        if (post.imgUrl.isEmpty()) {
+            holder.ivPhoto.visibility = View.GONE
+        } else {
+            holder.ivPhoto.visibility = View.VISIBLE
+            Glide.with(context).load(post.imgUrl).into(holder.ivPhoto)
+        }
         // if this is my post message
         if (post.postId == uid) {
             holder.btnDelete.visibility = View.VISIBLE
@@ -58,6 +65,9 @@ class PostAdapter(
             }
         } else {
             holder.btnDelete.visibility = View.GONE
+        }
+        holder.btnComment.setOnClickListener {
+            // todo create comment
         }
     }
 
@@ -91,6 +101,8 @@ class PostAdapter(
         val tvTitle = itemView.tvTitle
         val tvBody = itemView.tvBody
         val btnDelete = itemView.btnDelete
+        val ivPhoto = itemView.ivPhoto
+        val tvAuthor = itemView.tvAuthor
         val btnComment = itemView.btnComment
     }
 }

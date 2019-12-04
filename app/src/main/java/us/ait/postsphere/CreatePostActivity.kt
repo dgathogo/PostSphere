@@ -4,21 +4,18 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_create_post.*
-import us.ait.postsphere.data.Comment
 import us.ait.postsphere.data.Post
 import java.io.ByteArrayOutputStream
 import java.net.URLEncoder
@@ -67,11 +64,11 @@ class CreatePostActivity : AppCompatActivity() {
             imgAttach.setImageBitmap(uploadBitmap)
             imgAttach.visibility = View.VISIBLE
 
-//            data?.let {
-//                uploadBitmap = it.extras!!.get("data") as Bitmap
-//                imgAttach.setImageBitmap(uploadBitmap)
-//                imgAttach.visibility = View.VISIBLE
-//            }
+            data?.let {
+                uploadBitmap = it.extras!!.get("data") as Bitmap
+                imgAttach.setImageBitmap(uploadBitmap)
+                imgAttach.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -125,8 +122,7 @@ class CreatePostActivity : AppCompatActivity() {
             FirebaseAuth.getInstance().currentUser!!.displayName!!,
             etTitle.text.toString(),
             etBody.text.toString(),
-            imageUrl,
-            mutableListOf()
+            imageUrl
         )
 
         var postsCollection = FirebaseFirestore.getInstance().collection("posts")
@@ -146,23 +142,24 @@ class CreatePostActivity : AppCompatActivity() {
     @Throws(Exception::class)
     private fun uploadPostWithImage() {
 
+
         val baos = ByteArrayOutputStream()
         uploadBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val imageInBytes = baos.toByteArray()
 
-        val storageRef = FirebaseStorage.getInstance().getReference()
+        val storageRef = FirebaseStorage.getInstance().reference
         val newImage = URLEncoder.encode(UUID.randomUUID().toString(), "UTF-8") + ".jpg"
         val newImagesRef = storageRef.child("images/$newImage")
 
+
+        Log.d("hehehe", newImagesRef.path)
         newImagesRef.putBytes(imageInBytes)
             .addOnFailureListener {
+                Log.d("hehehe", "okay")
                 Toast.makeText(this@CreatePostActivity, it.message, Toast.LENGTH_SHORT).show()
             }.addOnSuccessListener {
-                newImagesRef.downloadUrl.addOnCompleteListener(object : OnCompleteListener<Uri> {
-                    override fun onComplete(task: Task<Uri>) {
-                        uploadPost(task.result.toString())
-                    }
-                })
+
+                newImagesRef.downloadUrl.addOnCompleteListener { task -> uploadPost(task.result.toString()) }
             }
     }
 }
