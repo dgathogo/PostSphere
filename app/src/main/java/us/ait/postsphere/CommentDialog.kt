@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.new_comment_dialog.view.*
 import us.ait.postsphere.data.Comment
 
@@ -36,6 +37,8 @@ class CommentDialog : DialogFragment() {
     var isEditMode: Boolean = true
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        super.onCreate(savedInstanceState)
+
         val builder = AlertDialog.Builder(requireContext())
 
         builder.setTitle(getString(R.string.new_comment))
@@ -70,7 +73,7 @@ class CommentDialog : DialogFragment() {
                 if (isEditMode) {
                     handleCommentEdit()
                 } else {
-//                    handleCommentCreate()
+                    handleCommentCreate()
                 }
 
                 (dialog as AlertDialog).dismiss()
@@ -81,8 +84,6 @@ class CommentDialog : DialogFragment() {
     }
 
     private fun handleCommentEdit() {
-//        var comment =FirebaseFirestore.
-
         val commentToEdit = arguments?.getSerializable(
             ForumActivity.KEY_COMMENT
         ) as Comment
@@ -91,24 +92,14 @@ class CommentDialog : DialogFragment() {
         commentHandler.commentUpdated(commentToEdit)
     }
 
-//    private fun handleCommentCreate() {
-//        var comment = Comment(
-//            FirebaseAuth.getInstance().currentUser!!.uid,
-//            FirebaseAuth.getInstance().currentUser!!.displayName!!,
-//            etCommentText.text.toString(),
-//            mutableListOf()
-//        )
-//        var posts = FirebaseFirestore.getInstance().collection("posts")
-//        var commentsCollection = post.id
-//
-//        commentsCollection.add(comment).addOnSuccessListener {
-//            Toast.makeText(context as  ForumActivity, "Upload OK", Toast.LENGTH_LONG).show()
-//        }.addOnFailureListener {
-//            Toast.makeText(
-//                context as ForumActivity,
-//                "Upload failed: ${it.message}",
-//                Toast.LENGTH_LONG
-//            ).show()
-//        }
-//    }
+    private fun handleCommentCreate() {
+        commentHandler.commentCreated(
+            Comment(
+                FirebaseAuth.getInstance().currentUser!!.uid,
+                FirebaseAuth.getInstance().currentUser!!.displayName!!,
+                etCommentText.text.toString(),
+                mutableListOf()
+            )
+        )
+    }
 }

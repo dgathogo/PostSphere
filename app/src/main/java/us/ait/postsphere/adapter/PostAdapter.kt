@@ -1,6 +1,6 @@
 package us.ait.postsphere.adapter
 
-import android.annotation.SuppressLint
+//import com.bumptech.glide.Glide
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -8,14 +8,13 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-//import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.post_row.view.*
+import us.ait.postsphere.ForumActivity
 import us.ait.postsphere.R
 import us.ait.postsphere.data.Post
 
@@ -52,7 +51,6 @@ class PostAdapter(
         }
     }
 
-    @SuppressLint("WrongConstant")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val post = postsList[position]
         holder.tvAuthor.text = post.postAuthor
@@ -76,12 +74,18 @@ class PostAdapter(
         } else {
             holder.btnDelete.visibility = View.GONE
         }
-        val childLayoutManager = LinearLayoutManager(holder.rvPostComments.context, LinearLayout.VERTICAL, false)
+        val childLayoutManager =
+            LinearLayoutManager(holder.rvPostComments.context, RecyclerView.VERTICAL, false)
+        val childAdapter = CommentAdapter(context, uid, post, null)
+        childAdapter.addAll(post.postComments)
 
         holder.rvPostComments.apply {
             layoutManager = childLayoutManager
-            adapter = CommentAdapter(uid, post.postComments)
+            adapter = childAdapter
             setRecycledViewPool(viewPool)
+        }
+        holder.btnComment.setOnClickListener {
+            (context as ForumActivity).showCommentDialog()
         }
     }
 
@@ -101,7 +105,6 @@ class PostAdapter(
         notifyItemRemoved(index)
     }
 
-
     fun removePostByKey(key: String) {
         val index = postKeys.indexOf(key)
         if (index != -1) {
@@ -118,5 +121,6 @@ class PostAdapter(
         val ivPhoto: ImageView = itemView.ivPhoto
         val tvAuthor: TextView = itemView.tvAuthor
         val rvPostComments: RecyclerView = itemView.rvComments
+        val btnComment: Button = itemView.btnComment
     }
 }

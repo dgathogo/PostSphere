@@ -13,15 +13,15 @@ import us.ait.postsphere.adapter.PostAdapter
 import us.ait.postsphere.data.Comment
 import us.ait.postsphere.data.Post
 
-class ForumActivity : AppCompatActivity() {
+class ForumActivity : AppCompatActivity(), CommentDialog.CommentHandler {
     private lateinit var postsAdapter: PostAdapter
 
     companion object {
         const val KEY_POST = "KEY_TODO"
         const val KEY_COMMENT = "KEY_COMMENT"
         const val KEY_STARTED = "KEY_STARTED"
-        const val TAG_COMMENT_DIALOG = "TAG_TODO_DIALOG"
-        const val TAG_COMMENT_EDIT = "TAG_TODO_EDIT"
+        const val TAG_COMMENT_DIALOG = "TAG_COMMENT_DIALOG"
+        const val TAG_COMMENT_EDIT = "TAG_COMMENT_EDIT"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +66,18 @@ class ForumActivity : AppCompatActivity() {
         postsAdapter.addPost(post, "aldkhfasdf")
     }
 
+    fun showCommentDialog() {
+        CommentDialog().show(supportFragmentManager,TAG_COMMENT_DIALOG)
+    }
+
+    override fun commentCreated(item: Comment) {
+
+    }
+
+    override fun commentUpdated(item: Comment) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
 
     private fun queryPosts() {
         val db = FirebaseFirestore.getInstance()
@@ -108,4 +120,6 @@ class ForumActivity : AppCompatActivity() {
                 }
             })
     }
+
+
 }
