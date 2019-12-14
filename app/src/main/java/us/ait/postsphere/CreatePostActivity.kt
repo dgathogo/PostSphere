@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -107,9 +106,9 @@ class CreatePostActivity : AppCompatActivity() {
         when (requestCode) {
             PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "CAMERA perm granted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.perm_granted), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this, "CAMERA perm NOT granted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.perm_not_granted), Toast.LENGTH_SHORT).show()
                     btnAttach.visibility = View.GONE
                 }
             }
@@ -122,7 +121,8 @@ class CreatePostActivity : AppCompatActivity() {
             FirebaseAuth.getInstance().currentUser!!.displayName!!,
             etTitle.text.toString(),
             etBody.text.toString(),
-            imageUrl
+            imageUrl,
+            mutableListOf()
         )
 
         var postsCollection = FirebaseFirestore.getInstance().collection("posts")
@@ -141,8 +141,6 @@ class CreatePostActivity : AppCompatActivity() {
 
     @Throws(Exception::class)
     private fun uploadPostWithImage() {
-
-
         val baos = ByteArrayOutputStream()
         uploadBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val imageInBytes = baos.toByteArray()
@@ -152,13 +150,10 @@ class CreatePostActivity : AppCompatActivity() {
         val newImagesRef = storageRef.child("images/$newImage")
 
 
-        Log.d("hehehe", newImagesRef.path)
         newImagesRef.putBytes(imageInBytes)
             .addOnFailureListener {
-                Log.d("hehehe", "okay")
                 Toast.makeText(this@CreatePostActivity, it.message, Toast.LENGTH_SHORT).show()
             }.addOnSuccessListener {
-
                 newImagesRef.downloadUrl.addOnCompleteListener { task -> uploadPost(task.result.toString()) }
             }
     }

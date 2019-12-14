@@ -1,10 +1,16 @@
 package us.ait.postsphere.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 //import com.bumptech.glide.Glide
@@ -15,13 +21,15 @@ import us.ait.postsphere.data.Post
 
 class PostAdapter(
     private val context: Context,
-    private val uid: String
+    private val uid: String,
+    private val clickListener: View.OnClickListener
 ) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     private var postsList = mutableListOf<Post>()
     private var postKeys = mutableListOf<String>()
 
     private var lastIndex = -1
+    private val viewPool = RecyclerView.RecycledViewPool()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -44,11 +52,13 @@ class PostAdapter(
         }
     }
 
+    @SuppressLint("WrongConstant")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val post = postsList[position]
         holder.tvAuthor.text = post.postAuthor
         holder.tvTitle.text = post.postTitle
         holder.tvBody.text = post.postBody
+        holder.itemView.setOnClickListener(clickListener)
         setAnimation(holder.itemView, position)
 
         if (post.imgUrl.isEmpty()) {
@@ -66,8 +76,12 @@ class PostAdapter(
         } else {
             holder.btnDelete.visibility = View.GONE
         }
-        holder.btnComment.setOnClickListener {
-            // todo create comment
+        val childLayoutManager = LinearLayoutManager(holder.rvPostComments.context, LinearLayout.VERTICAL, false)
+
+        holder.rvPostComments.apply {
+            layoutManager = childLayoutManager
+            adapter = CommentAdapter(uid, post.postComments)
+            setRecycledViewPool(viewPool)
         }
     }
 
@@ -98,11 +112,11 @@ class PostAdapter(
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvTitle = itemView.tvTitle
-        val tvBody = itemView.tvBody
-        val btnDelete = itemView.btnDelete
-        val ivPhoto = itemView.ivPhoto
-        val tvAuthor = itemView.tvAuthor
-        val btnComment = itemView.btnComment
+        val tvTitle: TextView = itemView.tvTitle
+        val tvBody: TextView = itemView.tvBody
+        val btnDelete: Button = itemView.btnDelete
+        val ivPhoto: ImageView = itemView.ivPhoto
+        val tvAuthor: TextView = itemView.tvAuthor
+        val rvPostComments: RecyclerView = itemView.rvComments
     }
 }

@@ -1,18 +1,28 @@
 package us.ait.postsphere
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.activity_forum.*
 import us.ait.postsphere.adapter.PostAdapter
+import us.ait.postsphere.data.Comment
 import us.ait.postsphere.data.Post
 
 class ForumActivity : AppCompatActivity() {
     private lateinit var postsAdapter: PostAdapter
+
+    companion object {
+        const val KEY_POST = "KEY_TODO"
+        const val KEY_COMMENT = "KEY_COMMENT"
+        const val KEY_STARTED = "KEY_STARTED"
+        const val TAG_COMMENT_DIALOG = "TAG_TODO_DIALOG"
+        const val TAG_COMMENT_EDIT = "TAG_TODO_EDIT"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +32,9 @@ class ForumActivity : AppCompatActivity() {
             startActivity(Intent(this@ForumActivity, CreatePostActivity::class.java))
         }
 
-        postsAdapter = PostAdapter(this, FirebaseAuth.getInstance().currentUser!!.uid)
+
+        postsAdapter =
+            PostAdapter(this, FirebaseAuth.getInstance().currentUser!!.uid, View.OnClickListener {})
 
         var linLayoutManager = LinearLayoutManager(this)
         linLayoutManager.reverseLayout = true
@@ -31,8 +43,27 @@ class ForumActivity : AppCompatActivity() {
         recyclerPosts.layoutManager = linLayoutManager
 
         recyclerPosts.adapter = postsAdapter
+        addPosts()
+//        queryPosts()
 
-        queryPosts()
+    }
+
+    fun addPosts() {
+
+        var post = Post("aljsdf", "Daniel", "Test Post", "This is just a test", "")
+        post.postComments = mutableListOf(
+            Comment("laskdjdf", "Daniel", "No Comment really"),
+            Comment(
+                "zxnvzcxmnsdf",
+                "Toudo",
+                "Another one",
+                mutableListOf(
+                    Comment("laskdjdf", "Daniel", "No Comment really"),
+                    Comment("laskdjdf", "Daniel", "No Comment really")
+                )
+            )
+        )
+        postsAdapter.addPost(post, "aldkhfasdf")
     }
 
 

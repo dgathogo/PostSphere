@@ -1,94 +1,61 @@
 package us.ait.postsphere.adapter
 
-//import com.bumptech.glide.Glide
-import android.content.Context
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.post_row.view.*
+import kotlinx.android.synthetic.main.comment_row.view.*
 import us.ait.postsphere.R
 import us.ait.postsphere.data.Comment
 
 class CommentAdapter(
-    private val context: Context,
-    private val uid: String
+    private val uid: String,
+    private val comments: List<Comment>
 ) : RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
-
-    private var commentsList = mutableListOf<Comment>()
-    private var commentsKeys = mutableListOf<String>()
-
-    private var lastIndex = -1
-
+    private val viewPool = RecyclerView.RecycledViewPool()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.post_row, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.comment_row, parent, false)
         return ViewHolder(view)
-
     }
 
-    override fun getItemCount(): Int = commentsList.size
-
-    private fun setAnimation(viewToAnimate: View, position: Int) {
-        if (position > lastIndex) {
-            val animation = AnimationUtils.loadAnimation(
-                context,
-                android.R.anim.slide_in_left
-            )
-            viewToAnimate.startAnimation(animation)
-            lastIndex = position
-        }
+    override fun getItemCount(): Int {
+        return comments.size
     }
 
+    @SuppressLint("WrongConstant")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val comment = commentsList[position]
+        val comment = comments[position]
+        holder.tvAuthor.text = comment.commentAuthor
         holder.tvBody.text = comment.commentBody
-        setAnimation(holder.itemView, position)
+        val childLayoutManager = LinearLayoutManager(holder.rvComments.context, LinearLayout.VERTICAL, false)
 
-
-        // if this is my comment message
+        holder.rvComments.apply {
+            layoutManager = childLayoutManager
+            adapter = CommentAdapter(uid, comment.comments)
+            setRecycledViewPool(viewPool)
+        }
         if (comment.commentId == uid) {
             holder.btnDelete.visibility = View.VISIBLE
             holder.btnDelete.setOnClickListener {
-                removeComment(holder.adapterPosition)
+//                removeComment(holder.adapterPosition)
             }
         } else {
             holder.btnDelete.visibility = View.GONE
         }
     }
 
-    fun addComment(comment: Comment, key: String) {
-        commentsList.add(comment)
-        commentsKeys.add(key)
-        notifyDataSetChanged()
-    }
-
-    private fun removeComment(index: Int) {
-        FirebaseFirestore.getInstance().collection("comments").document(
-            commentsKeys[index]
-        ).delete()
-
-        commentsList.removeAt(index)
-        commentsKeys.removeAt(index)
-        notifyItemRemoved(index)
-    }
-
-
-    fun removeCommentByKey(key: String) {
-        val index = commentsKeys.indexOf(key)
-        if (index != -1) {
-            commentsList.removeAt(index)
-            commentsKeys.removeAt(index)
-            notifyItemRemoved(index)
-        }
-    }
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvBody = itemView.tvBody
-        val btnDelete = itemView.btnDelete
-        val btnComment = itemView.btnComment
+        val tvAuthor: TextView = itemView.tvAuthor
+        val tvBody: TextView = itemView.tvBody
+        val btnDelete: Button = itemView.btnDelete
+        val rvComments: RecyclerView = itemView.rvComments
     }
+
+
 }
