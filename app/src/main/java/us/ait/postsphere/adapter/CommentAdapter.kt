@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.comment_row.view.*
 import us.ait.postsphere.ForumActivity
 import us.ait.postsphere.R
@@ -15,15 +17,11 @@ import us.ait.postsphere.data.Comment
 import us.ait.postsphere.data.Post
 
 class CommentAdapter(
-    private val context: Context,
-    private val uid: String,
-    private val parentPost: Post?,
-    private val parentComment: Comment?
+    private val uid: String
 ) : RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
 
     private var commentsList = mutableListOf<Comment>()
     private var commentKeys = mutableListOf<String>()
-    private val viewPool = RecyclerView.RecycledViewPool()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.comment_row, parent, false)
@@ -36,22 +34,10 @@ class CommentAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val comment = commentsList[position]
-        holder.tvAuthor.text = comment.commentAuthor
-        holder.tvBody.text = comment.commentBody
-        val childLayoutManager = LinearLayoutManager(
-            holder.rvComments.context,
-            RecyclerView.VERTICAL, false
-        )
-        val childAdapter = CommentAdapter(context, uid, null, comment)
-        childAdapter.addAll(comment.comments)
+        holder.tvAuthor.text = comment.author
+        holder.tvBody.text = comment.text
 
-        holder.rvComments.apply {
-            layoutManager = childLayoutManager
-            adapter = childAdapter
-            setRecycledViewPool(viewPool)
-        }
-
-        if (comment.commentId == uid) {
+        if (comment.uid == uid) {
             holder.btnDelete.visibility = View.VISIBLE
             holder.btnDelete.setOnClickListener {
                 removeComment(holder.adapterPosition)
@@ -59,25 +45,18 @@ class CommentAdapter(
         } else {
             holder.btnDelete.visibility = View.GONE
         }
-        holder.btnComment.setOnClickListener {
-            (context as ForumActivity).showCommentDialog()
-        }
-    }
-
-    fun addAll(comments: List<Comment>) {
-        commentsList.addAll(comments)
-
-        for (item in commentsList) {
-            commentKeys.add(item.commentId)
-        }
     }
 
     fun addComment(comment: Comment, key: String) {
         commentsList.add(comment)
         commentKeys.add(key)
+        notifyDataSetChanged()
     }
 
-    fun removeComment(position: Int) {
+    private fun removeComment(position: Int) {
+        FirebaseFirestore.getInstance().collection("comments").document(
+            commentKeys[position]
+        ).delete()
         commentsList.removeAt(position)
         commentKeys.removeAt(position)
     }
@@ -94,9 +73,7 @@ class CommentAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvAuthor: TextView = itemView.tvAuthor
         val tvBody: TextView = itemView.tvBody
-        val btnDelete: Button = itemView.btnDelete
-        val btnComment: Button = itemView.btnComment
-        val rvComments: RecyclerView = itemView.rvComments
+        val btnDelete: ImageButton = itemView.btnDelete
     }
 
 

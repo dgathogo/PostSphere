@@ -6,10 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,15 +20,17 @@ import us.ait.postsphere.data.Post
 class PostAdapter(
     private val context: Context,
     private val uid: String,
-    private val clickListener: View.OnClickListener
+    private val clickListener: ItemClickListener
 ) : RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
     private var postsList = mutableListOf<Post>()
     private var postKeys = mutableListOf<String>()
 
     private var lastIndex = -1
-    private val viewPool = RecyclerView.RecycledViewPool()
 
+    interface ItemClickListener {
+        fun onItemClicked(post: Post, key: String)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -53,10 +54,10 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val post = postsList[position]
-        holder.tvAuthor.text = post.postAuthor
-        holder.tvTitle.text = post.postTitle
-        holder.tvBody.text = post.postBody
-        holder.itemView.setOnClickListener(clickListener)
+        holder.tvAuthor.text = post.author
+        holder.tvTitle.text = post.title
+        holder.tvBody.text = post.body
+        holder.bind(post, clickListener, postKeys[position])
         setAnimation(holder.itemView, position)
 
         if (post.imgUrl.isEmpty()) {
@@ -65,24 +66,14 @@ class PostAdapter(
             holder.ivPhoto.visibility = View.VISIBLE
             Glide.with(context).load(post.imgUrl).into(holder.ivPhoto)
         }
-        // if this is my post message
-        if (post.postId == uid) {
+
+        if (post.uid == uid) {
             holder.btnDelete.visibility = View.VISIBLE
             holder.btnDelete.setOnClickListener {
                 removePost(holder.adapterPosition)
             }
         } else {
             holder.btnDelete.visibility = View.GONE
-        }
-        val childLayoutManager =
-            LinearLayoutManager(holder.rvPostComments.context, RecyclerView.VERTICAL, false)
-        val childAdapter = CommentAdapter(context, uid, post, null)
-        childAdapter.addAll(post.postComments)
-
-        holder.rvPostComments.apply {
-            layoutManager = childLayoutManager
-            adapter = childAdapter
-            setRecycledViewPool(viewPool)
         }
         holder.btnComment.setOnClickListener {
             (context as ForumActivity).showCommentDialog()
@@ -95,14 +86,14 @@ class PostAdapter(
         notifyDataSetChanged()
     }
 
-    private fun removePost(index: Int) {
+    private fun removePost(position: Int) {
         FirebaseFirestore.getInstance().collection("posts").document(
-            postKeys[index]
+            postKeys[position]
         ).delete()
 
-        postsList.removeAt(index)
-        postKeys.removeAt(index)
-        notifyItemRemoved(index)
+        postsList.removeAt(position)
+        postKeys.removeAt(position)
+        notifyItemRemoved(position)
     }
 
     fun removePostByKey(key: String) {
@@ -117,10 +108,15 @@ class PostAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvTitle: TextView = itemView.tvTitle
         val tvBody: TextView = itemView.tvBody
-        val btnDelete: Button = itemView.btnDelete
+        val btnDelete: ImageButton = itemView.btnDelete
         val ivPhoto: ImageView = itemView.ivPhoto
         val tvAuthor: TextView = itemView.tvAuthor
-        val rvPostComments: RecyclerView = itemView.rvComments
-        val btnComment: Button = itemView.btnComment
+        val btnComment: ImageButton = itemView.btnComment
+
+        fun bind( post: Post, clickListener: ItemClickListener, key: String) {
+            itemView.setOnClickListener {
+                clickListener.onItemClicked(post, key)
+            }
+        }
     }
 }

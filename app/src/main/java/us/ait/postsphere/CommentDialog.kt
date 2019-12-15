@@ -47,7 +47,7 @@ class CommentDialog : DialogFragment() {
             R.layout.new_comment_dialog, null
         )
 
-        etCommentText = rootView.etComment
+        etCommentText = rootView.etComment2
         builder.setView(rootView)
 
         isEditMode = (arguments != null) && arguments!!.containsKey(ForumActivity.KEY_COMMENT)
@@ -56,7 +56,7 @@ class CommentDialog : DialogFragment() {
             builder.setTitle(getString(R.string.edit_comment))
             var comment = arguments?.getSerializable(ForumActivity.KEY_COMMENT) as Comment
 
-            etCommentText.setText(comment.commentBody)
+            etCommentText.setText(comment.text)
         }
 
         builder.setPositiveButton(getString(R.string.save)) { _, _ -> }
@@ -87,7 +87,7 @@ class CommentDialog : DialogFragment() {
         val commentToEdit = arguments?.getSerializable(
             ForumActivity.KEY_COMMENT
         ) as Comment
-        commentToEdit.commentBody = etCommentText.text.toString()
+        commentToEdit.text = etCommentText.text.toString()
 
         commentHandler.commentUpdated(commentToEdit)
     }
@@ -97,8 +97,7 @@ class CommentDialog : DialogFragment() {
             Comment(
                 FirebaseAuth.getInstance().currentUser!!.uid,
                 FirebaseAuth.getInstance().currentUser!!.displayName!!,
-                etCommentText.text.toString(),
-                mutableListOf()
+                etCommentText.text.toString()
             )
         )
     }

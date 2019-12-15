@@ -2,18 +2,20 @@ package us.ait.postsphere
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.PrimaryKey
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.activity_forum.*
+import us.ait.postsphere.PostDetailActivity.Companion.EXTRA_POST_KEY
 import us.ait.postsphere.adapter.PostAdapter
+import us.ait.postsphere.adapter.PostAdapter.ItemClickListener
 import us.ait.postsphere.data.Comment
 import us.ait.postsphere.data.Post
 
-class ForumActivity : AppCompatActivity(), CommentDialog.CommentHandler {
+class ForumActivity : AppCompatActivity() {
     private lateinit var postsAdapter: PostAdapter
 
     companion object {
@@ -24,6 +26,8 @@ class ForumActivity : AppCompatActivity(), CommentDialog.CommentHandler {
         const val TAG_COMMENT_EDIT = "TAG_COMMENT_EDIT"
     }
 
+    var editIndex = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forum)
@@ -33,8 +37,19 @@ class ForumActivity : AppCompatActivity(), CommentDialog.CommentHandler {
         }
 
 
+        var clickListener = object : ItemClickListener {
+            override fun onItemClicked(post: Post, key: String) {
+                var intent = Intent(this@ForumActivity, PostDetailActivity::class.java)
+                val bundle = Bundle()
+                bundle.putSerializable(KEY_POST, post)
+                intent.putExtras(bundle )
+
+                intent.putExtra(EXTRA_POST_KEY, key)
+                startActivity(intent)
+            }
+        }
         postsAdapter =
-            PostAdapter(this, FirebaseAuth.getInstance().currentUser!!.uid, View.OnClickListener {})
+            PostAdapter(this, FirebaseAuth.getInstance().currentUser!!.uid, clickListener)
 
         var linLayoutManager = LinearLayoutManager(this)
         linLayoutManager.reverseLayout = true
@@ -43,41 +58,24 @@ class ForumActivity : AppCompatActivity(), CommentDialog.CommentHandler {
         recyclerPosts.layoutManager = linLayoutManager
 
         recyclerPosts.adapter = postsAdapter
-        addPosts()
-//        queryPosts()
+//        addPosts()
+        queryPosts()
 
-    }
-
-    fun addPosts() {
-
-        var post = Post("aljsdf", "Daniel", "Test Post", "This is just a test", "")
-        post.postComments = mutableListOf(
-            Comment("laskdjdf", "Daniel", "No Comment really"),
-            Comment(
-                "zxnvzcxmnsdf",
-                "Toudo",
-                "Another one",
-                mutableListOf(
-                    Comment("laskdjdf", "Daniel", "No Comment really"),
-                    Comment("laskdjdf", "Daniel", "No Comment really")
-                )
-            )
-        )
-        postsAdapter.addPost(post, "aldkhfasdf")
     }
 
     fun showCommentDialog() {
-        CommentDialog().show(supportFragmentManager,TAG_COMMENT_DIALOG)
+        CommentDialog().show(supportFragmentManager, TAG_COMMENT_DIALOG)
     }
 
-    override fun commentCreated(item: Comment) {
+    fun showEditCommentDialog(commentEdit: Comment, position: Int) {
+        editIndex = position
+        val editDialog = CommentDialog()
+        val bundle = Bundle()
+        bundle.putSerializable(KEY_COMMENT, commentEdit)
+        editDialog.arguments = bundle
 
+        editDialog.show(supportFragmentManager, TAG_COMMENT_EDIT)
     }
-
-    override fun commentUpdated(item: Comment) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
 
     private fun queryPosts() {
         val db = FirebaseFirestore.getInstance()
@@ -120,6 +118,4 @@ class ForumActivity : AppCompatActivity(), CommentDialog.CommentHandler {
                 }
             })
     }
-
-
 }

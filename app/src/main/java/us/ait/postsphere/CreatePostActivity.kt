@@ -106,9 +106,11 @@ class CreatePostActivity : AppCompatActivity() {
         when (requestCode) {
             PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, getString(R.string.perm_granted), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.perm_granted), Toast.LENGTH_SHORT)
+                        .show()
                 } else {
-                    Toast.makeText(this, getString(R.string.perm_not_granted), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.perm_not_granted), Toast.LENGTH_SHORT)
+                        .show()
                     btnAttach.visibility = View.GONE
                 }
             }
