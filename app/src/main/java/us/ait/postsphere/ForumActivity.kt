@@ -5,14 +5,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.room.PrimaryKey
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.activity_forum.*
 import us.ait.postsphere.PostDetailActivity.Companion.EXTRA_POST_KEY
 import us.ait.postsphere.adapter.PostAdapter
 import us.ait.postsphere.adapter.PostAdapter.ItemClickListener
-import us.ait.postsphere.data.Comment
 import us.ait.postsphere.data.Post
 
 class ForumActivity : AppCompatActivity() {
@@ -22,8 +20,8 @@ class ForumActivity : AppCompatActivity() {
         const val KEY_POST = "KEY_TODO"
         const val KEY_STARTED = "KEY_STARTED"
         const val KEY_COMMENT = "KEY_COMMENT"
+        const val KEY_KEY = "KEY_KEY"
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +38,7 @@ class ForumActivity : AppCompatActivity() {
                 var intent = Intent(this@ForumActivity, PostDetailActivity::class.java)
                 val bundle = Bundle()
                 bundle.putSerializable(KEY_POST, post)
-                intent.putExtras(bundle )
+                intent.putExtras(bundle)
 
                 intent.putExtra(EXTRA_POST_KEY, key)
                 startActivity(intent)
@@ -56,11 +54,19 @@ class ForumActivity : AppCompatActivity() {
         recyclerPosts.layoutManager = linLayoutManager
 
         recyclerPosts.adapter = postsAdapter
-//        addPosts()
         queryPosts()
 
     }
 
+    fun editPost(post: Post, key: String) {
+
+        var intent = Intent(this@ForumActivity, CreatePostActivity::class.java)
+        val bundle = Bundle()
+        bundle.putSerializable(KEY_POST, post)
+        intent.putExtras(bundle)
+        intent.putExtra(KEY_KEY, key)
+        startActivity(intent)
+    }
 
 
     private fun queryPosts() {
@@ -90,11 +96,8 @@ class ForumActivity : AppCompatActivity() {
                                 postsAdapter.addPost(post, dc.document.id)
                             }
                             DocumentChange.Type.MODIFIED -> {
-                                Toast.makeText(
-                                    this@ForumActivity,
-                                    "update: ${dc.document.id}",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                val post = dc.document.toObject(Post::class.java)
+                                postsAdapter.updatePost(post, dc.document.id)
                             }
                             DocumentChange.Type.REMOVED -> {
                                 postsAdapter.removePostByKey(dc.document.id)

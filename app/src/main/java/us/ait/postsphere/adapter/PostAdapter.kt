@@ -1,12 +1,11 @@
 package us.ait.postsphere.adapter
 
-//import com.bumptech.glide.Glide
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.ImageButton
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -69,15 +68,17 @@ class PostAdapter(
 
         if (post.uid == uid) {
             holder.btnDelete.visibility = View.VISIBLE
+            holder.btnEdit.visibility = View.VISIBLE
             holder.btnDelete.setOnClickListener {
                 removePost(holder.adapterPosition)
             }
+            holder.btnEdit.setOnClickListener {
+                (context as ForumActivity).editPost(post, postKeys[holder.adapterPosition])
+            }
         } else {
             holder.btnDelete.visibility = View.GONE
+            holder.btnEdit.visibility = View.GONE
         }
-//        holder.btnComment.setOnClickListener {
-//            (context as ForumActivity).showCommentDialog()
-//        }
     }
 
     fun addPost(post: Post, key: String) {
@@ -105,15 +106,21 @@ class PostAdapter(
         }
     }
 
+    fun updatePost(post: Post, key: String) {
+        var position = postKeys.indexOf(key)
+        postsList[position] = post
+        notifyItemChanged(position)
+    }
+
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvTitle: TextView = itemView.tvTitle
         val tvBody: TextView = itemView.tvBody
-        val btnDelete: ImageButton = itemView.btnDelete
+        val btnDelete: Button = itemView.btnDelete
         val ivPhoto: ImageView = itemView.ivPhoto
         val tvAuthor: TextView = itemView.tvAuthor
-        val btnComment: ImageButton = itemView.btnComment
+        val btnEdit: Button = itemView.btnEdit
 
-        fun bind( post: Post, clickListener: ItemClickListener, key: String) {
+        fun bind(post: Post, clickListener: ItemClickListener, key: String) {
             itemView.setOnClickListener {
                 clickListener.onItemClicked(post, key)
             }

@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_post_detail.*
-import kotlinx.android.synthetic.main.new_comment_dialog.*
 import kotlinx.android.synthetic.main.post_row.view.*
 import us.ait.postsphere.ForumActivity.Companion.KEY_POST
 import us.ait.postsphere.data.Comment
@@ -30,7 +29,8 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
     private var postListener: ValueEventListener? = null
     private var adapter: CommentAdapter? = null
     private lateinit var user: FirebaseUser
-    var editIndex = -1
+    private var editIndex = -1
+
     companion object {
 
         private const val TAG = "PostDetailActivity"
@@ -143,8 +143,12 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
             })
     }
 
+    fun removeComment(key: String) {
+        commentsReference.child(key).removeValue()
+    }
+
     private class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val btnDelete: ImageButton = itemView.btnDelete
+        val btnDelete: Button = itemView.btnDelete
         fun bind(comment: Comment) {
             itemView.tvAuthor.text = comment.author
             itemView.tvBody.text = comment.text
@@ -235,7 +239,7 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
             if (comments[position].uid == uid) {
                 holder.btnDelete.visibility = View.VISIBLE
                 holder.btnDelete.setOnClickListener {
-                    removeComment(position)
+                    (context as PostDetailActivity).removeComment(commentIds[position])
                 }
             } else {
                 holder.btnDelete.visibility = View.GONE
@@ -243,12 +247,6 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         override fun getItemCount(): Int = comments.size
-
-        fun removeComment(position: Int) {
-            commentIds.removeAt(position)
-            comments.removeAt(position)
-            notifyDataSetChanged()
-        }
 
         fun cleanupListener() {
             childEventListener?.let {

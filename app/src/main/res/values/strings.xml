@@ -25,4 +25,6 @@
     <string name="login_ok">Login OK</string>
     <string name="registration_ok">Registration OK!</string>
     <string name="error">Error %1$s</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
 </resources>

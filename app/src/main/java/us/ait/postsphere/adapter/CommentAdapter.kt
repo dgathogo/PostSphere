@@ -73,7 +73,7 @@ class CommentAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvAuthor: TextView = itemView.tvAuthor
         val tvBody: TextView = itemView.tvBody
-        val btnDelete: ImageButton = itemView.btnDelete
+        val btnDelete: Button = itemView.btnDelete
     }
 
 
