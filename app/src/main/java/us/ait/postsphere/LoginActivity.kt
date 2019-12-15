@@ -21,11 +21,11 @@ class LoginActivity : AppCompatActivity() {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(
             etEmail.text.toString(), etPassword.text.toString()
         ).addOnSuccessListener {
-            Toast.makeText(this@LoginActivity, "Login OK", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@LoginActivity, getString(R.string.login_ok), Toast.LENGTH_LONG).show()
 
             startActivity(Intent(this@LoginActivity, ForumActivity::class.java))
         }.addOnFailureListener {
-            Toast.makeText(this@LoginActivity, "Error: ${it.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@LoginActivity, getString(R.string.error, it.message), Toast.LENGTH_LONG).show()
         }
 
     }
@@ -44,9 +44,9 @@ class LoginActivity : AppCompatActivity() {
                     .build()
             )
 
-            Toast.makeText(this@LoginActivity, "Registration OK!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@LoginActivity, getString(R.string.registration_ok), Toast.LENGTH_LONG).show()
         }.addOnFailureListener {
-            Toast.makeText(this@LoginActivity, "Error: ${it.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@LoginActivity, getString(R.string.error, it.message), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -55,11 +55,11 @@ class LoginActivity : AppCompatActivity() {
     private fun isFormValid(): Boolean {
         return when {
             etEmail.text.isEmpty() -> {
-                etEmail.error = "This field can not be empty"
+                etEmail.error = getString(R.string.error_empty_field)
                 false
             }
             etPassword.text.isEmpty() -> {
-                etPassword.error = "This field can not be empty"
+                etPassword.error = getString(R.string.error_empty_field)
                 false
             }
             else -> true

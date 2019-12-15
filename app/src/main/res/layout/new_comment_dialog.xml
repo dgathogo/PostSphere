@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/etComment2"
+        android:id="@+id/etComment"
         android:layout_width="match_parent"
         android:hint="@string/write_your_comment"
         android:layout_height="wrap_content"/>

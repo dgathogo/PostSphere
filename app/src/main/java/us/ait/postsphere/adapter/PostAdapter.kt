@@ -75,9 +75,9 @@ class PostAdapter(
         } else {
             holder.btnDelete.visibility = View.GONE
         }
-        holder.btnComment.setOnClickListener {
-            (context as ForumActivity).showCommentDialog()
-        }
+//        holder.btnComment.setOnClickListener {
+//            (context as ForumActivity).showCommentDialog()
+//        }
     }
 
     fun addPost(post: Post, key: String) {

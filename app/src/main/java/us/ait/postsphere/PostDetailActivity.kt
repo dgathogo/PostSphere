@@ -15,9 +15,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_post_detail.*
+import kotlinx.android.synthetic.main.new_comment_dialog.*
 import kotlinx.android.synthetic.main.post_row.view.*
 import us.ait.postsphere.ForumActivity.Companion.KEY_POST
-import us.ait.postsphere.adapter.PostAdapter
 import us.ait.postsphere.data.Comment
 import us.ait.postsphere.data.Post
 import java.util.*
@@ -30,11 +30,13 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
     private var postListener: ValueEventListener? = null
     private var adapter: CommentAdapter? = null
     private lateinit var user: FirebaseUser
-
+    var editIndex = -1
     companion object {
 
         private const val TAG = "PostDetailActivity"
         const val EXTRA_POST_KEY = "post_key"
+        const val TAG_COMMENT_DIALOG = "TAG_COMMENT_DIALOG"
+        const val TAG_COMMENT_EDIT = "TAG_COMMENT_EDIT"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,20 +108,34 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         val i = v.id
         if (i == R.id.btnComment) {
-            postComment()
+//            postComment()
+            showCommentDialog()
+
         }
     }
 
-    private fun postComment() {
+    private fun showCommentDialog() {
+        CommentDialog().show(supportFragmentManager, TAG_COMMENT_DIALOG)
+    }
+
+    fun showEditCommentDialog(commentEdit: Comment, position: Int) {
+        editIndex = position
+        val editDialog = CommentDialog()
+        val bundle = Bundle()
+        bundle.putSerializable(ForumActivity.KEY_COMMENT, commentEdit)
+        editDialog.arguments = bundle
+
+        editDialog.show(supportFragmentManager, TAG_COMMENT_EDIT)
+    }
+
+    fun postComment(text: String) {
         val uid = user.uid
         FirebaseDatabase.getInstance().reference.child("users").child(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val authorName = user.displayName!!
-                    val commentText = etComment.text.toString()
-                    val comment = Comment(uid, authorName, commentText)
+                    val comment = Comment(uid, authorName, text)
                     commentsReference.push().setValue(comment)
-                    etComment.text = null
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -192,8 +208,8 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
 
                 override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
                     Log.d(TAG, "onChildMoved:" + dataSnapshot.key!!)
-                    val movedComment = dataSnapshot.getValue(Comment::class.java)
-                    val commentKey = dataSnapshot.key
+//                    val movedComment = dataSnapshot.getValue(Comment::class.java)
+//                    val commentKey = dataSnapshot.key
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -240,5 +256,4 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-
 }

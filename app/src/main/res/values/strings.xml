@@ -22,4 +22,7 @@
     <string name="perm_granted">CAMERA perm granted</string>
     <string name="perm_not_granted">CAMERA perm NOT granted</string>
     <string name="enter_your_comment">Enter your comment</string>
+    <string name="login_ok">Login OK</string>
+    <string name="registration_ok">Registration OK!</string>
+    <string name="error">Error %1$s</string>
 </resources>

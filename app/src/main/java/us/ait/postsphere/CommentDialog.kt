@@ -12,29 +12,10 @@ import us.ait.postsphere.data.Comment
 
 class CommentDialog : DialogFragment() {
 
-    interface CommentHandler {
-        fun commentCreated(item: Comment)
-
-        fun commentUpdated(item: Comment)
-    }
-
-    private lateinit var commentHandler: CommentHandler
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        if (context is CommentHandler) {
-            commentHandler = context
-        } else {
-            throw RuntimeException(
-                getString(R.string.interface_not_implemented)
-            )
-        }
-    }
 
     private lateinit var etCommentText: EditText
 
-    var isEditMode: Boolean = true
+    private var isEditMode: Boolean = true
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         super.onCreate(savedInstanceState)
@@ -47,7 +28,7 @@ class CommentDialog : DialogFragment() {
             R.layout.new_comment_dialog, null
         )
 
-        etCommentText = rootView.etComment2
+        etCommentText = rootView.etComment
         builder.setView(rootView)
 
         isEditMode = (arguments != null) && arguments!!.containsKey(ForumActivity.KEY_COMMENT)
@@ -59,7 +40,7 @@ class CommentDialog : DialogFragment() {
             etCommentText.setText(comment.text)
         }
 
-        builder.setPositiveButton(getString(R.string.save)) { _, _ -> }
+        builder.setPositiveButton(getString(R.string.save)) { _, _ ->  }
 
         return builder.create()
     }
@@ -69,13 +50,9 @@ class CommentDialog : DialogFragment() {
 
         val positiveButton = (dialog as AlertDialog).getButton(Dialog.BUTTON_POSITIVE)
         positiveButton.setOnClickListener {
-            if (etCommentText.text.isNotEmpty()) {
-                if (isEditMode) {
-                    handleCommentEdit()
-                } else {
-                    handleCommentCreate()
-                }
 
+            if (etCommentText.text.isNotEmpty()) {
+                (context as PostDetailActivity).postComment(etCommentText.text.toString())
                 (dialog as AlertDialog).dismiss()
             } else {
                 etCommentText.error = getString(R.string.error_empty_field)
@@ -83,22 +60,21 @@ class CommentDialog : DialogFragment() {
         }
     }
 
-    private fun handleCommentEdit() {
-        val commentToEdit = arguments?.getSerializable(
-            ForumActivity.KEY_COMMENT
-        ) as Comment
-        commentToEdit.text = etCommentText.text.toString()
-
-        commentHandler.commentUpdated(commentToEdit)
-    }
-
-    private fun handleCommentCreate() {
-        commentHandler.commentCreated(
-            Comment(
-                FirebaseAuth.getInstance().currentUser!!.uid,
-                FirebaseAuth.getInstance().currentUser!!.displayName!!,
-                etCommentText.text.toString()
-            )
-        )
-    }
+//    private fun handleCommentEdit() {
+//        val commentToEdit = arguments?.getSerializable(
+//            ForumActivity.KEY_COMMENT
+//        ) as Comment
+//        commentToEdit.text = etCommentText.text.toString()
+//
+//    }
+//
+//    private fun handleCommentCreate() {
+//        commentHandler.commentCreated(
+//            Comment(
+//                FirebaseAuth.getInstance().currentUser!!.uid,
+//                FirebaseAuth.getInstance().currentUser!!.displayName!!,
+//                etCommentText.text.toString()
+//            )
+//        )
+//    }
 }

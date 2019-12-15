@@ -20,13 +20,11 @@ class ForumActivity : AppCompatActivity() {
 
     companion object {
         const val KEY_POST = "KEY_TODO"
-        const val KEY_COMMENT = "KEY_COMMENT"
         const val KEY_STARTED = "KEY_STARTED"
-        const val TAG_COMMENT_DIALOG = "TAG_COMMENT_DIALOG"
-        const val TAG_COMMENT_EDIT = "TAG_COMMENT_EDIT"
+        const val KEY_COMMENT = "KEY_COMMENT"
     }
 
-    var editIndex = -1
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,19 +61,7 @@ class ForumActivity : AppCompatActivity() {
 
     }
 
-    fun showCommentDialog() {
-        CommentDialog().show(supportFragmentManager, TAG_COMMENT_DIALOG)
-    }
 
-    fun showEditCommentDialog(commentEdit: Comment, position: Int) {
-        editIndex = position
-        val editDialog = CommentDialog()
-        val bundle = Bundle()
-        bundle.putSerializable(KEY_COMMENT, commentEdit)
-        editDialog.arguments = bundle
-
-        editDialog.show(supportFragmentManager, TAG_COMMENT_EDIT)
-    }
 
     private fun queryPosts() {
         val db = FirebaseFirestore.getInstance()
