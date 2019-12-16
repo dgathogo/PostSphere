@@ -8,4 +8,4 @@ data class Comment(
     var uid: String = "",
     var author: String = "",
     var text: String = ""
-) :Serializable
+) : Serializable

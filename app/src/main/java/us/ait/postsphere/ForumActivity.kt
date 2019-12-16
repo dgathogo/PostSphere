@@ -5,7 +5,6 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
@@ -23,7 +22,6 @@ class ForumActivity : AppCompatActivity() {
 
     companion object {
         const val KEY_POST = "KEY_TODO"
-        const val KEY_STARTED = "KEY_STARTED"
         const val KEY_COMMENT = "KEY_COMMENT"
         const val KEY_KEY = "KEY_KEY"
         const val VERTICAL_ITEM_SPACE = 8
@@ -92,7 +90,7 @@ class ForumActivity : AppCompatActivity() {
                     if (e != null) {
                         Toast.makeText(
                             this@ForumActivity,
-                            "listen error: ${e.message}",
+                            getString(R.string.listen_error, e.message),
                             Toast.LENGTH_LONG
                         ).show()
                         return

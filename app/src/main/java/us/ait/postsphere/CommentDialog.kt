@@ -67,22 +67,4 @@ class CommentDialog : DialogFragment() {
             }
         }
     }
-
-//    private fun handleCommentEdit() {
-//        val commentToEdit = arguments?.getSerializable(
-//            ForumActivity.KEY_COMMENT
-//        ) as Comment
-//        commentToEdit.text = etCommentText.text.toString()
-//
-//    }
-//
-//    private fun handleCommentCreate() {
-//        commentHandler.commentCreated(
-//            Comment(
-//                FirebaseAuth.getInstance().currentUser!!.uid,
-//                FirebaseAuth.getInstance().currentUser!!.displayName!!,
-//                etCommentText.text.toString()
-//            )
-//        )
-//    }
 }

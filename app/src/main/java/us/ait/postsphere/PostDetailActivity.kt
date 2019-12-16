@@ -48,7 +48,7 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_post_detail)
 
         var postKey = intent.getStringExtra(EXTRA_POST_KEY)
-            ?: throw IllegalArgumentException("Must pass EXTRA_POST_KEY")
+            ?: throw IllegalArgumentException(getString(R.string.error_key_missing))
 
         postReference = FirebaseDatabase.getInstance().reference
             .child("posts").child(postKey)
@@ -85,9 +85,9 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+                Log.w(TAG, getString(R.string.db_cancelled), databaseError.toException())
                 Toast.makeText(
-                    baseContext, "Failed to load post.",
+                    baseContext, getString(R.string.error_load_post),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -133,7 +133,7 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
 
     fun postComment(text: String) {
         val uid = user.uid
-        FirebaseDatabase.getInstance().reference.child("users").child(uid)
+        FirebaseDatabase.getInstance().reference.child(getString(R.string.users)).child(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val authorName = user.displayName!!
@@ -147,7 +147,7 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun updateComment(text: String, key: String) {
-        commentsReference.child(key).child("text").setValue(text)
+        commentsReference.child(key).child(getString(R.string.text)).setValue(text)
     }
 
     fun removeComment(key: String) {
@@ -177,8 +177,6 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
         init {
             val childEventListener = object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    Log.d(TAG, "onChildAdded:" + dataSnapshot.key!!)
-
                     val comment = dataSnapshot.getValue(Comment::class.java)
                     commentIds.add(dataSnapshot.key!!)
                     comments.add(comment!!)
@@ -189,7 +187,6 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
                 ) {
-                    Log.d(TAG, "onChildChanged: ${dataSnapshot.key}")
                     val newComment = dataSnapshot.getValue(Comment::class.java)
                     val commentKey = dataSnapshot.key
 
@@ -199,12 +196,10 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
 
                         notifyItemChanged(commentIndex)
                     } else {
-                        Log.w(TAG, "onChildChanged:unknown_child: $commentKey")
                     }
                 }
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-                    Log.d(TAG, "onChildRemoved:" + dataSnapshot.key!!)
                     val commentKey = dataSnapshot.key
 
                     val commentIndex = commentIds.indexOf(commentKey)
@@ -214,20 +209,19 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
 
                         notifyItemRemoved(commentIndex)
                     } else {
-                        Log.w(TAG, "onChildRemoved:unknown_child:" + commentKey!!)
                     }
                 }
 
-                override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    Log.d(TAG, "onChildMoved:" + dataSnapshot.key!!)
-//                    val movedComment = dataSnapshot.getValue(Comment::class.java)
-//                    val commentKey = dataSnapshot.key
-                }
+                override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {}
 
                 override fun onCancelled(databaseError: DatabaseError) {
-                    Log.w(TAG, "postComments:onCancelled", databaseError.toException())
+                    Log.w(
+                        TAG,
+                        context.getString(R.string.db_cancelled),
+                        databaseError.toException()
+                    )
                     Toast.makeText(
-                        context, "Failed to load comments.",
+                        context, context.getString(R.string.error_load_comments),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -259,6 +253,7 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
                 }
             } else {
                 holder.btnDelete.visibility = View.GONE
+                holder.btnEdit.visibility = View.GONE
             }
         }
 

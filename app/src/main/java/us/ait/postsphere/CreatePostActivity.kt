@@ -101,7 +101,7 @@ class CreatePostActivity : AppCompatActivity() {
             ) {
                 Toast.makeText(
                     this,
-                    "I need it for camera", Toast.LENGTH_SHORT
+                    getString(R.string.permissions_explanation), Toast.LENGTH_SHORT
                 ).show()
             }
 
@@ -145,12 +145,16 @@ class CreatePostActivity : AppCompatActivity() {
         )
 
         postsCollection.add(post).addOnSuccessListener {
-            Toast.makeText(this@CreatePostActivity, "Upload OK", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this@CreatePostActivity,
+                getString(R.string.upload_ok),
+                Toast.LENGTH_LONG
+            ).show()
             finish()
         }.addOnFailureListener {
             Toast.makeText(
                 this@CreatePostActivity,
-                "Upload failed: ${it.message}",
+                getString(R.string.upload_failed, it.message),
                 Toast.LENGTH_LONG
             ).show()
         }

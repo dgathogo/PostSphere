@@ -1,6 +1,5 @@
 package us.ait.postsphere.data
 
-import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
 import java.io.Serializable
 
@@ -12,18 +11,6 @@ data class Post(
     var body: String = "",
     var imgUrl: String = "",
     var comments: MutableList<Comment> = ArrayList()
-) :Serializable {
-
-    @Exclude
-    fun toMap(): Map<String, Any?> {
-        return mapOf(
-            "uid" to uid,
-            "author" to author,
-            "title" to title,
-            "body" to body,
-            "comments" to comments
-        )
-    }
-}
+) : Serializable
 
 
