@@ -15,7 +15,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_post_detail.*
-import kotlinx.android.synthetic.main.post_row.view.*
+import kotlinx.android.synthetic.main.comment_row.view.*
+import kotlinx.android.synthetic.main.post_row.view.btnDelete
+import kotlinx.android.synthetic.main.post_row.view.tvAuthor
+import kotlinx.android.synthetic.main.post_row.view.tvBody
+import us.ait.postsphere.ForumActivity.Companion.KEY_KEY
 import us.ait.postsphere.ForumActivity.Companion.KEY_POST
 import us.ait.postsphere.data.Comment
 import us.ait.postsphere.data.Post
@@ -29,7 +33,6 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
     private var postListener: ValueEventListener? = null
     private var adapter: CommentAdapter? = null
     private lateinit var user: FirebaseUser
-    private var editIndex = -1
 
     companion object {
 
@@ -109,7 +112,6 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         val i = v.id
         if (i == R.id.btnComment) {
-//            postComment()
             showCommentDialog()
 
         }
@@ -119,14 +121,14 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
         CommentDialog().show(supportFragmentManager, TAG_COMMENT_DIALOG)
     }
 
-    fun showEditCommentDialog(commentEdit: Comment, position: Int) {
-        editIndex = position
+    fun showEditCommentDialog(commentEdit: Comment, key: String) {
         val editDialog = CommentDialog()
         val bundle = Bundle()
         bundle.putSerializable(ForumActivity.KEY_COMMENT, commentEdit)
+        bundle.putString(KEY_KEY, key)
         editDialog.arguments = bundle
-
         editDialog.show(supportFragmentManager, TAG_COMMENT_EDIT)
+
     }
 
     fun postComment(text: String) {
@@ -144,12 +146,17 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
             })
     }
 
+    fun updateComment(text: String, key: String) {
+        commentsReference.child(key).child("text").setValue(text)
+    }
+
     fun removeComment(key: String) {
         commentsReference.child(key).removeValue()
     }
 
     private class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val btnDelete: Button = itemView.btnDelete
+        val btnEdit: Button = itemView.btnEditComment
         fun bind(comment: Comment) {
             itemView.tvAuthor.text = comment.author
             itemView.tvBody.text = comment.text
@@ -241,6 +248,14 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
                 holder.btnDelete.visibility = View.VISIBLE
                 holder.btnDelete.setOnClickListener {
                     (context as PostDetailActivity).removeComment(commentIds[position])
+                }
+
+                holder.btnEdit.visibility = View.VISIBLE
+                holder.btnEdit.setOnClickListener {
+                    (context as PostDetailActivity).showEditCommentDialog(
+                        comments[position],
+                        commentIds[position]
+                    )
                 }
             } else {
                 holder.btnDelete.visibility = View.GONE

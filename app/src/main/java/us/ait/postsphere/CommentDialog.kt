@@ -1,12 +1,10 @@
 package us.ait.postsphere
 
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.new_comment_dialog.view.*
 import us.ait.postsphere.data.Comment
 
@@ -15,7 +13,9 @@ class CommentDialog : DialogFragment() {
 
     private lateinit var etCommentText: EditText
 
-    private var isEditMode: Boolean = true
+    private var isEditMode: Boolean = false
+
+    private var key: String? = ""
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         super.onCreate(savedInstanceState)
@@ -36,11 +36,11 @@ class CommentDialog : DialogFragment() {
         if (isEditMode) {
             builder.setTitle(getString(R.string.edit_comment))
             var comment = arguments?.getSerializable(ForumActivity.KEY_COMMENT) as Comment
-
+            key = arguments?.getString(ForumActivity.KEY_KEY)
             etCommentText.setText(comment.text)
         }
 
-        builder.setPositiveButton(getString(R.string.save)) { _, _ ->  }
+        builder.setPositiveButton(getString(R.string.save)) { _, _ -> }
 
         return builder.create()
     }
@@ -52,7 +52,15 @@ class CommentDialog : DialogFragment() {
         positiveButton.setOnClickListener {
 
             if (etCommentText.text.isNotEmpty()) {
-                (context as PostDetailActivity).postComment(etCommentText.text.toString())
+                if (isEditMode) {
+                    (context as PostDetailActivity).updateComment(
+                        etCommentText.text.toString(),
+                        key!!
+                    )
+
+                } else {
+                    (context as PostDetailActivity).postComment(etCommentText.text.toString())
+                }
                 (dialog as AlertDialog).dismiss()
             } else {
                 etCommentText.error = getString(R.string.error_empty_field)
