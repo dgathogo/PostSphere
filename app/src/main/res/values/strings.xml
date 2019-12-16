@@ -40,4 +40,8 @@
     <string name="post">Post</string>
     <string name="attach">Attach</string>
     <string name="title">Title</string>
+    <string name="log_in">Log in</string>
+    <string name="register">Register</string>
+    <string name="password">Password</string>
+    <string name="email">email</string>
 </resources>
