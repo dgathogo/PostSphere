@@ -7,9 +7,7 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_splash.*
 
-
 class SplashActivity : AppCompatActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +22,6 @@ class SplashActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }, 1200)
-
     }
 }
 

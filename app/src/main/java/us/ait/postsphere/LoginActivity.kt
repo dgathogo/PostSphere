@@ -64,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun userNameFromEmail(email: String) = email.substringBefore("@")
+    private fun userNameFromEmail(email: String) = email.substringBefore(getString(R.string.at_symbol))
 
     private fun isFormValid(): Boolean {
         return when {

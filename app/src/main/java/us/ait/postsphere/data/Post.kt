@@ -1,9 +1,7 @@
 package us.ait.postsphere.data
 
-import com.google.firebase.database.IgnoreExtraProperties
 import java.io.Serializable
 
-@IgnoreExtraProperties
 data class Post(
     var uid: String = "",
     var author: String = "",

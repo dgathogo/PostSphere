@@ -88,7 +88,7 @@ class PostAdapter(
     }
 
     private fun removePost(position: Int) {
-        FirebaseFirestore.getInstance().collection("posts").document(
+        FirebaseFirestore.getInstance().collection(context.getString(R.string.db_posts)).document(
             postKeys[position]
         ).delete()
 

@@ -38,7 +38,7 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
 
         private const val TAG = "PostDetailActivity"
-        const val EXTRA_POST_KEY = "post_key"
+        const val EXTRA_POST_KEY = "POST_KEY"
         const val TAG_COMMENT_DIALOG = "TAG_COMMENT_DIALOG"
         const val TAG_COMMENT_EDIT = "TAG_COMMENT_EDIT"
     }

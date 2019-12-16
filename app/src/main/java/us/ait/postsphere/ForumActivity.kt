@@ -78,7 +78,7 @@ class ForumActivity : AppCompatActivity() {
 
     private fun queryPosts() {
         val db = FirebaseFirestore.getInstance()
-        val query = db.collection("posts")
+        val query = db.collection(getString(R.string.db_posts))
 
         query.addSnapshotListener(
             object : EventListener<QuerySnapshot> {

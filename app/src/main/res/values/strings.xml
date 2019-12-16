@@ -44,4 +44,10 @@
     <string name="register">Register</string>
     <string name="password">Password</string>
     <string name="email">email</string>
+    <string name="db_posts">posts</string>
+    <string name="data">data</string>
+    <string name="encoding">UTF-8</string>
+    <string name="jpg">.jpg</string>
+    <string name="images_path">images/%1$s</string>
+    <string name="at_symbol">\@</string>
 </resources>

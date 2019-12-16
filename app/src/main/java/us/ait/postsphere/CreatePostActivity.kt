@@ -37,7 +37,7 @@ class CreatePostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_post)
-        postsCollection = FirebaseFirestore.getInstance().collection("posts")
+        postsCollection = FirebaseFirestore.getInstance().collection(getString(R.string.db_posts))
 
         var post = intent.extras?.getSerializable(ForumActivity.KEY_POST) as Post?
         var postKey = intent.getStringExtra(KEY_KEY)
@@ -76,12 +76,12 @@ class CreatePostActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            uploadBitmap = data!!.extras!!.get("data") as Bitmap
+            uploadBitmap = data!!.extras!!.get(getString(R.string.data)) as Bitmap
             imgAttach.setImageBitmap(uploadBitmap)
             imgAttach.visibility = View.VISIBLE
 
             data.let {
-                uploadBitmap = it.extras!!.get("data") as Bitmap
+                uploadBitmap = it.extras!!.get(getString(R.string.data)) as Bitmap
                 imgAttach.setImageBitmap(uploadBitmap)
                 imgAttach.visibility = View.VISIBLE
             }
@@ -167,8 +167,9 @@ class CreatePostActivity : AppCompatActivity() {
         val imageInBytes = baos.toByteArray()
 
         val storageRef = FirebaseStorage.getInstance().reference
-        val newImage = URLEncoder.encode(UUID.randomUUID().toString(), "UTF-8") + ".jpg"
-        val newImagesRef = storageRef.child("images/$newImage")
+        val newImage = URLEncoder.encode(UUID.randomUUID().toString(), getString(R.string.encoding)) + getString(
+                    R.string.jpg)
+        val newImagesRef = storageRef.child(getString(R.string.images_path, newImage))
 
 
         newImagesRef.putBytes(imageInBytes)
