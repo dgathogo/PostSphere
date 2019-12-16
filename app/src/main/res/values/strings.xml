@@ -37,4 +37,7 @@
     <string name="permissions_explanation">I need it for camera</string>
     <string name="upload_ok">Upload OK</string>
     <string name="upload_failed">Upload failed: %1$s</string>
+    <string name="post">Post</string>
+    <string name="attach">Attach</string>
+    <string name="title">Title</string>
 </resources>
