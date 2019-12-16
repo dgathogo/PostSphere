@@ -94,6 +94,7 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
         this.postListener = postListener
 
         adapter = CommentAdapter(this, user.uid, commentsReference)
+        rvComments.addItemDecoration(ForumActivity.VerticalSpaceItemDecoration(ForumActivity.VERTICAL_ITEM_SPACE))
         rvComments.adapter = adapter
     }
 

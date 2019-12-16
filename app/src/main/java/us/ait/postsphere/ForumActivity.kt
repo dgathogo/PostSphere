@@ -1,10 +1,14 @@
 package us.ait.postsphere
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.activity_forum.*
@@ -12,6 +16,7 @@ import us.ait.postsphere.PostDetailActivity.Companion.EXTRA_POST_KEY
 import us.ait.postsphere.adapter.PostAdapter
 import us.ait.postsphere.adapter.PostAdapter.ItemClickListener
 import us.ait.postsphere.data.Post
+
 
 class ForumActivity : AppCompatActivity() {
     private lateinit var postsAdapter: PostAdapter
@@ -21,6 +26,7 @@ class ForumActivity : AppCompatActivity() {
         const val KEY_STARTED = "KEY_STARTED"
         const val KEY_COMMENT = "KEY_COMMENT"
         const val KEY_KEY = "KEY_KEY"
+        const val VERTICAL_ITEM_SPACE = 8
     }
 
 
@@ -28,6 +34,7 @@ class ForumActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forum)
         setSupportActionBar(toolbar)
+
         fab.setOnClickListener {
             startActivity(Intent(this@ForumActivity, CreatePostActivity::class.java))
         }
@@ -51,9 +58,11 @@ class ForumActivity : AppCompatActivity() {
         linLayoutManager.reverseLayout = true
         linLayoutManager.stackFromEnd = true
 
-        recyclerPosts.layoutManager = linLayoutManager
+        rvPosts.layoutManager = linLayoutManager
 
-        recyclerPosts.adapter = postsAdapter
+        rvPosts.addItemDecoration(VerticalSpaceItemDecoration(VERTICAL_ITEM_SPACE))
+
+        rvPosts.adapter = postsAdapter
         queryPosts()
 
     }
@@ -106,5 +115,16 @@ class ForumActivity : AppCompatActivity() {
                     }
                 }
             })
+    }
+
+    class VerticalSpaceItemDecoration(private val verticalSpaceHeight: Int) :
+        ItemDecoration() {
+        override fun getItemOffsets(outRect: Rect, itemPosition: Int, parent: RecyclerView) {
+            outRect.bottom = verticalSpaceHeight
+            if (itemPosition != parent?.adapter?.itemCount?.minus(1)) {
+                outRect.bottom = verticalSpaceHeight
+            }
+        }
+
     }
 }
