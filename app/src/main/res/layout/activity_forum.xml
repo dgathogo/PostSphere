@@ -22,7 +22,6 @@
             android:fitsSystemWindows="true"
             app:contentScrim="@color/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:expandedTitleTextAppearance="@style/TextAppearance.Design.CollapsingToolbar.Expanded.Shadow"
             app:toolbarId="@+id/toolbar">
 
             <com.flaviofaria.kenburnsview.KenBurnsView
