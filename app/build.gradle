@@ -48,4 +48,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.2.0'
     implementation 'com.flaviofaria:kenburnsview:1.0.7'
     implementation 'uk.co.samuelwall:material-tap-target-prompt:2.3.0'
+    implementation 'com.google.android.material:material:<version>'
 }

@@ -119,7 +119,7 @@ class ForumActivity : AppCompatActivity() {
         ItemDecoration() {
         override fun getItemOffsets(outRect: Rect, itemPosition: Int, parent: RecyclerView) {
             outRect.bottom = verticalSpaceHeight
-            if (itemPosition != parent?.adapter?.itemCount?.minus(1)) {
+            if (itemPosition != parent.adapter?.itemCount?.minus(1)) {
                 outRect.bottom = verticalSpaceHeight
             }
         }

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -15,12 +15,18 @@
         <item name="android:buttonStyle">@style/Button</item>
         <item name="android:textViewStyle">@style/customTextViewStyle</item>
         <item name="android:editTextColor">#000000</item>
+        <item name="materialCardViewStyle">@style/MyCardView</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="MyCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">#C63F51F0</item>
+    </style>
+
     <style name="Button" parent="Widget.AppCompat.Button">
         <item name="android:textAllCaps">false</item>
         <item name="android:background">#C3424242</item>
@@ -34,6 +40,5 @@
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">#000000</item>
     </style>
-
 
 </resources>

@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -67,6 +68,12 @@ class PostDetailActivity : AppCompatActivity(), View.OnClickListener {
         tvTitle.text = post.title
         tvBody.text = post.body
         tvAuthor.text = post.author
+        if (post.imgUrl.isEmpty()) {
+            ivPhoto.visibility = View.GONE
+        } else {
+            ivPhoto.visibility = View.VISIBLE
+            Glide.with(this).load(post.imgUrl).into(ivPhoto)
+        }
     }
 
     public override fun onStart() {
